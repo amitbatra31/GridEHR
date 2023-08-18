@@ -195,3 +195,9 @@ html {
 	animation: arrows 1s ease-in-out infinite alternate,
 		p 2s ease infinite alternate;
 }
+
+
+.upload-file{
+	display: flex;
+	flex-direction: row;
+}

@@ -52,6 +52,17 @@ contract Agent {
        }
     }
 
+    //Added
+    function add_details(string memory _name, uint _age, uint _designation, string memory _hash) public returns(string memory){
+        address addr = msg.sender;
+        patient memory p;
+        p.name = _name;
+        p.age = _age;
+        p.record = _hash;
+        patientInfo[msg.sender] = p;
+        return _name;
+    }    
+
 
     function get_patient(address addr) view public returns (string memory , uint, uint[] memory , address, string memory ){
         // if(keccak256(patientInfo[addr].name) == keccak256(""))revert();
