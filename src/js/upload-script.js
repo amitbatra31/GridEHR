@@ -1,24 +1,26 @@
-const changeUploadFile = async ({formData}) => {
+const changeUploadFile = async (e) => {
     try {
+        e.preventDefault();
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
         const response = await fetch('http://localhost:5001/api/v0/add', {
             method: 'POST',
             body: formData,
         });
-
-        var data2 = await $.get('http://localhost:8080/ipfs/' + recordHash);
-
+        var datax = await $.get('http://localhost:8080/ipfs/' + recordHash);
         var data = await response.json();
         ipfsHash_report = data.Hash;
-
-        data2.Report = ipfsHash_report;
-
+        datax["Report"] = `http://localhost:8080/ipfs/${ipfsHash_report}`;
         var ipfs = window.IpfsApi('localhost', '5001');
         publicKey = web3.currentProvider.selectedAddress;
         publicKey = publicKey.toLowerCase();
         const Buffer = window.IpfsApi().Buffer;
         const name = a;
         const age = b.c[0];
-        const savedata = data2;
+        const savedata = datax;
+        console.log("savedd: ", savedata);
         var buffer = Buffer(JSON.stringify(savedata));
 
         ipfs.files.add(buffer, (error, result) => {
@@ -52,27 +54,18 @@ const changeUploadFile = async ({formData}) => {
                 );
             }
         });
+
     } catch (error) {
         console.error('Error uploading file:', error);
         uploadStatus.textContent =
             'An error occurred while uploading the file.';
     }
 }
-
-const changeScannedImage = async () => {
+const changeScannedImage = async (e) => {
     try {
-        const response = await fetch('http://localhost:5001/api/v0/add', {
-            method: 'POST',
-            body: formData,
-        });
-
+        e.preventDefault();
         var data2 = await $.get('http://localhost:8080/ipfs/' + recordHash);
-
-        var data = await response.json();
-        ipfsHash_report = data.Hash;
-
-        data2.Scanned_Image = $("#outputImageScanned")?.attr("src");
-
+        data2["Scanned_Image"] = $("#outputImageScanned")?.attr("src");
         var ipfs = window.IpfsApi('localhost', '5001');
         publicKey = web3.currentProvider.selectedAddress;
         publicKey = publicKey.toLowerCase();

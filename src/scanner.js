@@ -46,10 +46,12 @@ function processImage(img) {
   // Show the scanned image
   //   outputCanvas.style.display = 'block';
   outputImage.src = outputCanvas.toDataURL('image/png');
-  outputImage.style.display = 'block';
+  // outputImage.style.display = 'block';
+  outputImage.style.display = 'none';
 
   // Show the download button
   downloadButton.style.display = 'block';
+  downloadButton.style.display = 'none';
   downloadButton.addEventListener('click', downloadScannedImage);
 }
 

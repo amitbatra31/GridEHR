@@ -297,15 +297,13 @@
                                 for (const key in patientRecord) {
                                     if (patientRecord.hasOwnProperty(key)) {
                                         const value = patientRecord[key];
-                                        if (key === 'Report' && value) {
+                                        if (key === 'Report' && value)
                                             keyValueElement = $(
-                                                `<iframe src="${value}" style="width:auto; height:auto;" frameborder="0"></iframe>`,
+                                                `<iframe src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0"></iframe>`,
                                             );
-                                            console.log("jebvj ", key, value);
-                                        }
                                         else if (key === 'Scanned_Image' && value)
                                             keyValueElement = $(
-                                                `<img src="${value}" style="width:auto; height:auto;" frameborder="0" />`,
+                                                `<img src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0" />`,
                                             );
                                         else keyValueElement = $(`<p>${key}: ${value}</p>`);
                                         recordsContainer.append(keyValueElement);

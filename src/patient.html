@@ -134,7 +134,7 @@
                                         <h5>Scan File</h5>
                                         <input type="file" id="imageInput" accept="image/*" />
                                         <canvas id="outputCanvas" style="display: none"></canvas>
-                                        <img id="outputImageScanned" style="max-width: 100%;" />
+                                        <img id="outputImageScanned" style="max-width: 100%; display: none;" />
                                         <button id="downloadButton" style="display: none">
                                             Download Scanned Image
                                         </button>
@@ -394,146 +394,22 @@
             );
         });
 
-        const changeUploadFile = async ({ formData }) => {
-            try {
-                const response = await fetch('http://localhost:5001/api/v0/add', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                var data2 = await $.get('http://localhost:8080/ipfs/' + recordHash);
-
-                var data = await response.json();
-                ipfsHash_report = data.Hash;
-
-                data2.Report = ipfsHash_report;
-
-                var ipfs = window.IpfsApi('localhost', '5001');
-                publicKey = web3.currentProvider.selectedAddress;
-                publicKey = publicKey.toLowerCase();
-                const Buffer = window.IpfsApi().Buffer;
-                const name = a;
-                const age = b.c[0];
-                const savedata = data2;
-                var buffer = Buffer(JSON.stringify(savedata));
-
-                ipfs.files.add(buffer, (error, result) => {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        console.log('result:' + result);
-                        recordHash = result[0].hash;
-                        $('#recordsHash').html(
-                            `http://localhost:8080/ipfs/${recordHash}`,
-                        );
-                        $('#recordsHash').attr(
-                            'href',
-                            `http://localhost:8080/ipfs/${recordHash}`,
-                        );
-                        const designation = 0; //patient
-                        console.log(name, age, designation, recordHash);
-                        contractInstance.add_details(
-                            name,
-                            age,
-                            designation,
-                            recordHash,
-                            { gas: 2000000 },
-                            (err, res) => {
-                                if (!err) {
-                                    console.log('Successfully added report');
-                                } else {
-                                    console.log(err);
-                                }
-                            },
-                        );
-                    }
-                });
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                uploadStatus.textContent =
-                    'An error occurred while uploading the file.';
-            }
-        }
-        const changeScannedImage = async () => {
-            try {
-                const response = await fetch('http://localhost:5001/api/v0/add', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                var data2 = await $.get('http://localhost:8080/ipfs/' + recordHash);
-
-                var data = await response.json();
-                ipfsHash_report = data.Hash;
-
-                data2.Scanned_Image = $("#outputImageScanned")?.attr("src");
-
-                var ipfs = window.IpfsApi('localhost', '5001');
-                publicKey = web3.currentProvider.selectedAddress;
-                publicKey = publicKey.toLowerCase();
-                const Buffer = window.IpfsApi().Buffer;
-                const name = a;
-                const age = b.c[0];
-                const savedata = data2;
-                var buffer = Buffer(JSON.stringify(savedata));
-
-                ipfs.files.add(buffer, (error, result) => {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        console.log('result:' + result);
-                        recordHash = result[0].hash;
-                        $('#recordsHash').html(
-                            `http://localhost:8080/ipfs/${recordHash}`,
-                        );
-                        $('#recordsHash').attr(
-                            'href',
-                            `http://localhost:8080/ipfs/${recordHash}`,
-                        );
-                        const designation = 0; //patient
-                        console.log(name, age, designation, recordHash);
-                        contractInstance.add_details(
-                            name,
-                            age,
-                            designation,
-                            recordHash,
-                            { gas: 2000000 },
-                            (err, res) => {
-                                if (!err) {
-                                    console.log('Successfully added report');
-                                } else {
-                                    console.log(err);
-                                }
-                            },
-                        );
-                    }
-                });
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                uploadStatus.textContent =
-                    'An error occurred while uploading the file.';
-            }
-        }
         function showRecords(element) {
             if (toggleRecordsButton % 2 == 0) {
                 $.get('http://localhost:8080/ipfs/' + recordHash, function (data) {
-                    if (typeof data === 'string') {
-                        $('#records').html(data);
-                        $('#records').show();
-                        return;
-                    }
+                    var datax = data;
                     var recordsContainer = $('#records');
                     recordsContainer.empty();
-                    for (const key in data) {
-                        if (data.hasOwnProperty(key)) {
-                            const value = data[key];
+                    for (const key in datax) {
+                        if (datax.hasOwnProperty(key)) {
+                            const value = datax[key];
                             if (key === 'Report' && value)
                                 keyValueElement = $(
-                                    `<iframe src="${value}" style="width:auto; height:auto;" frameborder="0"></iframe>`,
+                                    `<iframe src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0"></iframe>`,
                                 );
                             else if (key === 'Scanned_Image' && value)
                                 keyValueElement = $(
-                                    `<img src="${value}" style="width:auto; height:auto;" frameborder="0" />`,
+                                    `<img src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0" />`,
                                 );
                             else keyValueElement = $(`<p>${key}: ${value}</p>`);
                             recordsContainer.append(keyValueElement);
@@ -554,88 +430,10 @@
             }
         }
 
+        var scannedImageEle = document.getElementById('imageInput')
+        scannedImageEle.onchange = changeScannedImage;
         var reportEle = document.getElementById('uploadForm');
-        reportEle.onchange = async function (e) {
-            console.log("fvihni");
-            e.preventDefault();
-
-            const fileInput = document.getElementById('fileInput');
-            const uploadStatus = document.getElementById('uploadStatus');
-
-            if (fileInput.files.length === 0) {
-                uploadStatus.textContent = 'Please select a file to upload.';
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const response = await fetch('http://localhost:5001/api/v0/add', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                const data = await response.json();
-                ipfsHash_report = data.Hash;
-
-                // uploadStatus.innerHTML = `<p style="color:#5B9A8B;">Report added successfully</p>`;
-                // $('#uploadForm').remove();
-
-                var ipfs = window.IpfsApi('localhost', '5001');
-                publicKey = web3.currentProvider.selectedAddress;
-                publicKey = publicKey.toLowerCase();
-                const Buffer = window.IpfsApi().Buffer;
-                const name = a;
-                const age = b.c[0];
-                const savedata = {
-                    name: name,
-                    age: age,
-                    Public_Key: publicKey,
-                    Scanned_Image: $("#outputImageScanned")?.attr("src"),
-                    Report: `http://localhost:8080/ipfs/${ipfsHash_report}`,
-                };
-                console.log("rdjnvdk", $("#outputImageScanned")?.attr("src"));
-                var buffer = Buffer(JSON.stringify(savedata));
-
-                ipfs.files.add(buffer, (error, result) => {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        console.log('result:' + result);
-                        recordHash = result[0].hash;
-                        $('#recordsHash').html(
-                            `http://localhost:8080/ipfs/${recordHash}`,
-                        );
-                        $('#recordsHash').attr(
-                            'href',
-                            `http://localhost:8080/ipfs/${recordHash}`,
-                        );
-                        const designation = 0; //patient
-                        console.log(name, age, designation, recordHash);
-                        contractInstance.add_details(
-                            name,
-                            age,
-                            designation,
-                            recordHash,
-                            { gas: 2000000 },
-                            (err, res) => {
-                                if (!err) {
-                                    console.log('Successfully added report');
-                                } else {
-                                    console.log(err);
-                                }
-                            },
-                        );
-                    }
-                });
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                uploadStatus.textContent =
-                    'An error occurred while uploading the file.';
-            }
-        }
+        reportEle.onchange = changeUploadFile;
 
         function giveAccess() {
             var list = document.getElementById('permitDoctorList');

@@ -192,12 +192,12 @@
                     var ipfshash = "";
 
                     if (designation == "0") {
-                        var reportTitle =
-                            `Name: ${name}
-Public Key: ${publicKey}
+                        var reportTitle = {Name: name, Public_Key: publicKey};
+//                             `Name: ${name}
+// Public Key: ${publicKey}
                             
-`;
-                        var buffer = Buffer(reportTitle);
+// `;
+                        var buffer = Buffer(JSON.stringify(reportTitle));
 
                         ipfs.files.add(buffer, (error, result) => {
                             if (error) {
