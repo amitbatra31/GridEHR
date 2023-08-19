@@ -131,8 +131,18 @@
                   <th>Upload a File to IPFS</th>
                   <td class="upload-file">
                     <form id="uploadForm">
+                      <h5>Upload File</h5>
                       <input type="file" id="fileInput" />
-                      <button type="submit">Upload</button>
+                      <button type="submit">Upload File</button>
+                      <h5>Scan File</h5>
+                      <input type="file" id="imageInput" accept="image/*" />
+                      <canvas id="outputCanvas" style="display: none"></canvas>
+                      <img id="outputImage" style="max-width: 100%" />
+                      <button id="downloadButton" style="display: none">
+                        Download Scanned Image
+                      </button>
+                      <script src="scanner.js"></script>
+                      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
                     </form>
                     <p id="uploadStatus"></p>
                   </td>
