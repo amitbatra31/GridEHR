@@ -286,10 +286,12 @@
               recordHash = result[4];
               $('#name').html(a);
               $('#age').html(b.c[0]);
-              $('#recordsHash').html(`https://ipfs.io/ipfs/${recordHash}`);
+              $('#recordsHash').html(
+                `http://localhost:8080/ipfs/${recordHash}`,
+              );
               $('#recordsHash').attr(
                 'href',
-                `https://ipfs.io/ipfs/${recordHash}`,
+                `http://localhost:8080/ipfs/${recordHash}`,
               );
 
               if (insurerAddress != 0) {
@@ -474,8 +476,8 @@
             const savedata = {
               name: name,
               age: age,
-              Reports: `https://ipfs.io/ipfs/${ipfsHash_report}`,
               Public_Key: publicKey,
+              Report: `http://localhost:8080/ipfs/${ipfsHash_report}`,
             };
             var buffer = Buffer(JSON.stringify(savedata));
 
@@ -485,10 +487,12 @@
               } else {
                 console.log('result:' + result);
                 recordHash = result[0].hash;
-                $('#recordsHash').html(`https://ipfs.io/ipfs/${recordHash}`);
+                $('#recordsHash').html(
+                  `http://localhost:8080/ipfs/${recordHash}`,
+                );
                 $('#recordsHash').attr(
                   'href',
-                  `https://ipfs.io/ipfs/${recordHash}`,
+                  `http://localhost:8080/ipfs/${recordHash}`,
                 );
                 const designation = 0; //patient
                 console.log(name, age, designation, recordHash);
