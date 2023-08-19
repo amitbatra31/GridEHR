@@ -1,6 +1,6 @@
 const imageInput = document.getElementById('imageInput');
 const outputCanvas = document.getElementById('outputCanvas');
-const outputImage = document.getElementById('outputImage');
+const outputImage = document.getElementById('outputImageScanned');
 const downloadButton = document.getElementById('downloadButton');
 
 imageInput.addEventListener('change', handleImageUpload);
