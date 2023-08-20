@@ -47,6 +47,39 @@
     .loginTop {
       margin-top: 60px;
     }
+
+    #hospitals-table {
+      width: 80%;
+      margin: 20px auto;
+      background-color: white;
+      border-collapse: collapse;
+      box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+    }
+
+    #hospitals-table th,
+    #hospitals-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #hospitals-table th {
+      background-color: #333;
+      color: white;
+    }
+
+    #hospitals-table tbody tr:hover {
+      background-color: #f2f2f2;
+    }
+    #searchHospitalInput {
+      display: block;
+      margin: 20px auto;
+        padding: 10px 10px 10px 35px; /* Adjust padding for icon */
+        border: 1px solid #ddd;
+        width: 80%;
+        background-color: white;
+        position: relative;
+    }
   </style>
 
   <link
@@ -103,6 +136,23 @@
   <section class="loginTop">
     <div class="container">
       <h1 class="text-center">Registered Hospitals</h1>
+      <div>
+        <input type="text" id="searchHospitalInput" placeholder="Search by name or address">
+      </div>
+      <table id="hospitals-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Contact</th>
+          </tr>
+        </thead>
+        <tbody id="hospitals-body">
+          <!-- Table rows will be dynamically added here -->
+        </tbody>
+      </table>
+
+
 
     </div>
   </section><!-- End Hero -->
@@ -184,6 +234,63 @@
       console.log("Invalid User!");
       $(".alert-warning").show();
     }
+
+
+    // fetch('hospitals.json')
+    // .then(response => response.json())
+    // .then(data => {
+    //   const tableBody = document.getElementById('hospitals-body');
+
+    //   data.forEach(hospital => {
+    //     const row = document.createElement('tr');
+    //     row.innerHTML = `
+    //                   <td>${hospital.name}</td>
+    //                   <td>${hospital.address}</td>
+    //                   <td>${hospital.contact}</td>
+    //               `;
+    //     row.addEventListener('click', () => {
+    //       window.location.href = `doctors-list.html?hospital=${encodeURIComponent(hospital.name)}`;
+    //     });
+    //     tableBody.appendChild(row);
+    //   });
+    // })
+    // .catch(error => console.error('Error fetching data:', error));
+    fetch('hospitals.json')
+      .then(response => response.json())
+      .then(data => {
+        const searchHospitalInput = document.getElementById('searchHospitalInput');
+        const tableBody = document.getElementById('hospitals-body');
+
+        searchHospitalInput.addEventListener('input', () => {
+          const searchTerm = searchHospitalInput.value.toLowerCase();
+          const filteredHospitals = data.filter(hospital =>
+            hospital.name.toLowerCase().includes(searchTerm) ||
+            hospital.address.toLowerCase().includes(searchTerm)
+          );
+
+          populateHospitalTable(filteredHospitals);
+        });
+
+        function populateHospitalTable(hospitals) {
+          tableBody.innerHTML = '';
+
+          hospitals.forEach(hospital => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                            <td>${hospital.name}</td>
+                            <td>${hospital.address}</td>
+                            <td>${hospital.contact}</td>
+                        `;
+            row.addEventListener('click', () => {
+              window.location.href = `doctors-list.html?hospital=${encodeURIComponent(hospital.name)}`;
+            });
+            tableBody.appendChild(row);
+          });
+        }
+
+        populateHospitalTable(data);
+      })
+      .catch(error => console.error('Error fetching data:', error));
 
 
 
