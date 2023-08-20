@@ -1,5 +1,5 @@
 {
-  "name": "medibuddy",
+  "name": "MedicSync",
   "version": "1.0.0",
   "description": "Decentralized platform for patient and doctor to connect securely",
   "main": "index.js",
@@ -13,6 +13,6 @@
     "truffle": "^5.11.2",
     "web3": "^4.0.3"
   },
-  "author": "Divij Katyal",
+  "author": "Lakshay",
   "license": "ISC"
 }
