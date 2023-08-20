@@ -1,5 +1,5 @@
 {
-  "name": "medibuddy",
+  "name": "MedicSync",
   "version": "1.0.0",
   "description": "Decentralized platform for patient and doctor to connect securely",
   "main": "index.js",
@@ -7,9 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "solc": "^0.4.24",
-    "web3": "^0.20.0"
+    "ipfs-http-client": "^60.0.1",
+    "lite-server": "^2.6.1",
+    "solc": "^0.8.21",
+    "truffle": "^5.11.2",
+    "web3": "^4.0.3"
   },
-  "author": "Divij Katyal",
+  "author": "Lakshay",
   "license": "ISC"
 }
