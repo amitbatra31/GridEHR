@@ -1,5 +1,6 @@
 const changeUploadFile = async (e) => {
     try {
+        console.log("dkfnjd");
         e.preventDefault();
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
@@ -63,6 +64,7 @@ const changeUploadFile = async (e) => {
 }
 const changeScannedImage = async (e) => {
     try {
+        console.log("sfdvjkbsvf");
         e.preventDefault();
         var data2 = await $.get('http://localhost:8080/ipfs/' + recordHash);
         data2["Scanned_Image"] = $("#outputImageScanned")?.attr("src");
