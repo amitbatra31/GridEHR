@@ -181,6 +181,11 @@
         
 
         function addAgent() {
+            const errorContainer = document.getElementById('aadhar-error');
+            if (errorContainer.textContent !== 'VALID') {
+                alert('ENTER VALID AADHAR NUMBER');
+                return;
+            }
             var ipfs = window.IpfsApi('localhost', '5001')
 
             const Buffer = window.IpfsApi().Buffer;
@@ -291,7 +296,26 @@
 
             return false;
         }
-    
+        document.addEventListener('DOMContentLoaded', function () {
+                const aadharInput = document.getElementById('aadhar');
+
+                aadharInput.addEventListener('input', function () {
+                    console.log(aadharInput.value);
+                    const aadharNumber = parseInt(aadharInput.value);
+                    const isValidAadhar = isValid.aadhar(aadharNumber);
+                    const errorContainer = document.getElementById('aadhar-error');
+                    if (isValidAadhar) {
+                        aadharInput.setCustomValidity('');
+                        errorContainer.textContent = 'VALID';
+                    } else {
+                        aadharInput.setCustomValidity(
+                            'Please enter a valid 12-digit Aadhar number.',
+                        );
+                        errorContainer.textContent =
+                            'Invalid Aadhar number. Please enter a valid 12-digit Aadhar number.';
+                    }
+                });
+            });
     </script>
 
 </body>
