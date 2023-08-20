@@ -98,6 +98,19 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group" id="specialization-div" style="display: none;">
+                        <label class="control-label col-sm-2" for="specialization">Specialization:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="hospital" placeholder="Enter specialization" name="specialization"
+                                required autofocus>
+                        </div>
+                    </div>
+                    <div class="form-group" id="hospital-div" style="display: none;">
+                        <label class="control-label col-sm-2" for="hospital">Hospital:</label>
+                        <div class="col-sm-8">
+                            <input type="age" class="form-control" id="hospital" placeholder="Enter hospital" name="hospital" required>
+                        </div>
+                    </div>
 
                 </form>
                 <div class="text-center">
@@ -122,6 +135,17 @@
 
     <script>
 
+        $("#designation").change(()=>{
+            if($("#designation").val() == "1"){
+                document.getElementById('specialization-div').style.display = "block";
+                document.getElementById('hospital-div').style.display = "block";
+            }else{
+                document.getElementById('specialization-div').style.display = "none";
+                document.getElementById('hospital-div').style.display = "none";                
+            }
+        })
+        
+
         function addAgent() {
             var ipfs = window.IpfsApi('localhost', '5001')
 
@@ -129,10 +153,10 @@
 
             name = $("#name").val();
             age = $("#age").val();
-
             designation = $("#designation").val();
+            specialization = $("#specialization").val();
+            hospital = $("#hospital").val();
             designation = parseInt(designation);
-            console.log(typeof(designation));
 
             publicKey = web3.currentProvider.selectedAddress;
             publicKey = publicKey.toLowerCase();
@@ -192,11 +216,8 @@
                     var ipfshash = "";
 
                     if (designation == "0") {
-                        var reportTitle = {Name: name, Public_Key: publicKey};
-//                             `Name: ${name}
-// Public Key: ${publicKey}
-                            
-// `;
+                        var reportTitle = {name: name, Public_Key: publicKey};
+
                         var buffer = Buffer(JSON.stringify(reportTitle));
 
                         ipfs.files.add(buffer, (error, result) => {

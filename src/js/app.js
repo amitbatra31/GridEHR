@@ -8,8 +8,8 @@
 var web3;
 
 //Below add agent deployed address
-var agentContractAddress = '0x92a9F2AcC85411037150B771876734A95c9375f8';
-// var agentContractAddress = '0xFd3A1aAB78bFFEAC0a4d78E65Dac2a1E38428aC7';
+// var agentContractAddress = '0x92a9F2AcC85411037150B771876734A95c9375f8';
+var agentContractAddress = '0x93CAdCD2dea0a09d71CB4117559b8C2317355746';
 
 function connect() {
   web3 = new Web3(window.ethereum);

@@ -65,7 +65,7 @@ contract Agent {
             p.name = _name;
             p.age = _age;
             p.record = _hash;
-            patientInfo[msg.sender] = p;
+            patientInfo[msg.sender].record = _hash;
             return _name;
         }
     }

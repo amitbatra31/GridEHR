@@ -128,7 +128,7 @@
     </div>
 
     <script src="js/jquery.js"></script>
-
+    <script src="./js/upload-script.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/app.js"></script>
@@ -228,7 +228,7 @@
                     function (error, result) {
                         if (!error) {
                             $.get('http://localhost:8080/ipfs/' + result, function (data) {
-                                  patientRecord = data;
+                                patientRecord = data;
                                 content =
                                     `<div class="tab-content">
                         <div id="view${patientAddress}">
@@ -291,21 +291,42 @@
                                     recordsContainer.html(patientRecord);
                                     return;
                                 }
-                                for (const key in patientRecord) {
-                                    if (patientRecord.hasOwnProperty(key)) {
-                                        const value = patientRecord[key];
-                                        if (key === 'Report' && value)
-                                            keyValueElement = $(
-                                                `<iframe src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0"></iframe>`,
-                                            );
-                                        else if (key === 'Scanned_Image' && value)
-                                            keyValueElement = $(
-                                                `<img src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0" />`,
-                                            );
-                                        else keyValueElement = $(`<p>${key}: ${value}</p>`);
-                                        recordsContainer.append(keyValueElement);
-                                    }
-                                }
+                                // patientRecord =
+                                // {
+                                //     name: "patA",
+                                //     Public_Key: "0xd1f455f09710fb70bb0446160ab3b032a692a545",
+                                //     Report: "http://localhost:8080/ipfs/Qmc5QtoF5Ei1j4TBRHwbJJ5VayjrZUNEx7RLTvojb7nY25",
+                                //     diagnosis: [
+                                //         {
+                                //             Diagnosed_By: "docA",
+                                //             Diagnosis_Time: "20/08/2023 16:13 PM",
+                                //             Diagnosis: "Cancer",
+                                //             Comments: "lkmdc "
+                                //         },
+                                //         {
+                                //             Diagnosed_By: "docA",
+                                //             Diagnosis_Time: "20/08/2023 16:13 PM",
+                                //             Diagnosis: "Covid-19",
+                                //             Comments: "ho dsvncsjbk jhvksj "
+                                //         }
+                                //     ]
+                                // }
+                                // for (const key in patientRecord) {
+                                //     if (patientRecord.hasOwnProperty(key)) {
+                                //         const value = patientRecord[key];
+                                //         if (key === 'Report' && value)
+                                //             keyValueElement = $(
+                                //                 `<iframe src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0"></iframe>`,
+                                //             );
+                                //         else if (key === 'Scanned_Image' && value)
+                                //             keyValueElement = $(
+                                //                 `<img src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0" />`,
+                                //             );
+                                //         else keyValueElement = $(`<p>${key}: ${value}</p>`);
+                                //         recordsContainer.append(keyValueElement);
+                                //     }
+                                // }
+                                showRecordFromObjectRec(patientRecord, recordsContainer);
                             });
                         } else {
                             console.log(error);
@@ -345,57 +366,102 @@
         function submitDiagnosis(element, index) {
             var table = document.getElementById('viewPatient');
             var patientAddress = table.rows[index].cells[1].innerHTML;
-
-            console.log(patientAddress);
             var diagnosis = $('#ailmentsList' + patientAddress).val();
             diagnosis = parseInt(diagnosis);
             var diagnosed = ailmentsDict[diagnosis];
             var comments = document.getElementById('details').value;
 
-            var oldRecords = $('#records' + patientAddress).html();
+            var oldRecords;
+            contractInstance.get_hash(
+                patientAddress,
+                { gas: 1000000 },
+                function (error, result) {
+                    if (!error) {
+                        $.get('http://localhost:8080/ipfs/' + result, function (data) {
+                            oldRecords = data;
+                            // console.log();
+                            var newRecords = {
+                                Diagnosed_By: docName,
+                                Diagnosis_Time: getDateTime(),
+                                Diagnosis: diagnosed,
+                                Comments: comments
+                            }
+                            if (oldRecords["diagnosis"] === undefined) oldRecords["diagnosis"] = [];
+                            oldRecords["diagnosis"].push(newRecords)
+                            var updatedRecords = oldRecords;
+                            if (!isNaN(diagnosis)) {
+                                var buffer = Buffer(JSON.stringify(updatedRecords));
 
-            var newRecords = `Diagnosed By : ${docName}
-Diagnosis Time : ${getDateTime()}
-Diagnosis : ${diagnosed}
-Comments : ${comments}
+                                ipfs.files.add(buffer, (error, result) => {
+                                    if (error) {
+                                        console.log(error);
+                                    } else {
+                                        ipfshash = result[0].hash;
+                                        contractInstance.insurance_claim(
+                                            patientAddress,
+                                            diagnosis,
+                                            ipfshash,
+                                            { gas: 1000000 },
+                                            function (error, result) {
+                                                if (!error) {
+                                                    alert('Your diagnosis has been submitted.');
+                                                    // delete content row
+                                                    table.deleteRow(index + 1);
 
-        
-`;
+                                                    // delete main row of corresponding content row
+                                                    table.deleteRow(index);
+                                                } else {
+                                                    $('.alert-danger').show();
+                                                    console.log(error);
+                                                }
+                                            },
+                                        );
+                                    }
+                                });
+                            } else {
+                                alert('Select a diagnosis');
+                            }
 
-            var updatedRecords = oldRecords + newRecords;
-
-            if (!isNaN(diagnosis)) {
-                var buffer = Buffer(updatedRecords);
-
-                ipfs.files.add(buffer, (error, result) => {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        ipfshash = result[0].hash;
-                        contractInstance.insurance_claim(
-                            patientAddress,
-                            diagnosis,
-                            ipfshash,
-                            { gas: 1000000 },
-                            function (error, result) {
-                                if (!error) {
-                                    alert('Your diagnosis has been submitted.');
-                                    // delete content row
-                                    table.deleteRow(index + 1);
-
-                                    // delete main row of corresponding content row
-                                    table.deleteRow(index);
-                                } else {
-                                    $('.alert-danger').show();
-                                    console.log(error);
-                                }
-                            },
-                        );
+                        })
                     }
-                });
-            } else {
-                alert('Select a diagnosis');
-            }
+                }
+            )
+
+
+            // var updatedRecords = oldRecords + newRecords;
+
+            // if (!isNaN(diagnosis)) {
+            //     var buffer = Buffer(updatedRecords);
+
+            //     ipfs.files.add(buffer, (error, result) => {
+            //         if (error) {
+            //             console.log(error);
+            //         } else {
+            //             ipfshash = result[0].hash;
+            //             contractInstance.insurance_claim(
+            //                 patientAddress,
+            //                 diagnosis,
+            //                 ipfshash,
+            //                 { gas: 1000000 },
+            //                 function (error, result) {
+            //                     if (!error) {
+            //                         alert('Your diagnosis has been submitted.');
+            //                         // delete content row
+            //                         table.deleteRow(index + 1);
+
+            //                         // delete main row of corresponding content row
+            //                         table.deleteRow(index);
+            //                     } else {
+            //                         $('.alert-danger').show();
+            //                         console.log(error);
+            //                     }
+            //                 },
+            //             );
+            //         }
+            //     });
+            // } else {
+            //     alert('Select a diagnosis');
+            // }
         }
     </script>
 </body>

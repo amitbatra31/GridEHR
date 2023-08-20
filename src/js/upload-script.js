@@ -1,6 +1,6 @@
 const changeUploadFile = async (e) => {
     try {
-        console.log("dkfnjd");
+        console.log("change 5");
         e.preventDefault();
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
@@ -18,8 +18,9 @@ const changeUploadFile = async (e) => {
         publicKey = web3.currentProvider.selectedAddress;
         publicKey = publicKey.toLowerCase();
         const Buffer = window.IpfsApi().Buffer;
-        const name = a;
+        // const name = a;
         const age = b.c[0];
+        const name = datax["name"];
         const savedata = datax;
         console.log("savedd: ", savedata);
         var buffer = Buffer(JSON.stringify(savedata));
@@ -64,7 +65,7 @@ const changeUploadFile = async (e) => {
 }
 const changeScannedImage = async (e) => {
     try {
-        console.log("sfdvjkbsvf");
+        console.log("cahng 5");
         e.preventDefault();
         var data2 = await $.get('http://localhost:8080/ipfs/' + recordHash);
         data2["Scanned_Image"] = $("#outputImageScanned")?.attr("src");
@@ -72,8 +73,9 @@ const changeScannedImage = async (e) => {
         publicKey = web3.currentProvider.selectedAddress;
         publicKey = publicKey.toLowerCase();
         const Buffer = window.IpfsApi().Buffer;
-        const name = a;
+        // const name = a;
         const age = b.c[0];
+        const name = data2["name"];
         const savedata = data2;
         var buffer = Buffer(JSON.stringify(savedata));
 
@@ -112,5 +114,32 @@ const changeScannedImage = async (e) => {
         console.error('Error uploading file:', error);
         uploadStatus.textContent =
             'An error occurred while uploading the file.';
+    }
+}
+
+
+
+const showRecordFromObjectRec = (obj, parentEle) => {
+
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            var value = obj[key];
+            if (key === 'Report' && value)
+                keyValueElement = $(
+                    `<iframe src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0"></iframe>`,
+                );
+            else if (key === 'Scanned_Image' && value)
+                keyValueElement = $(
+                    `<img src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0" />`,
+                );
+            else if (key === 'diagnosis') {
+                
+                value?.forEach(dia => {
+                    showRecordFromObjectRec(dia,parentEle);
+                });
+            }
+            else keyValueElement = $(`<p>${key}: ${value}</p>`);
+            parentEle.append(keyValueElement);
+        }
     }
 }

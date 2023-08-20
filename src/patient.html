@@ -154,6 +154,9 @@
                             <button type="submit" class="btn btn-info btn-lg" onclick="showRecords(this)">
                                 View medical records
                             </button>
+                            <button id="downloadmedicalrecord" style="background-color:#9ED2BE; color: white;" class="btn btn-lg">
+                                Download medical records
+                            </button>
                         </div>
                         <pre id="records" style="margin-top: 20px"></pre>
                     </div>
@@ -220,12 +223,15 @@
 
     <script src="js/jquery.js"></script>
     <script src="./js/upload-script.js"></script>
+    <script src="./js/download.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
     <script src="/js/web3.min.js"></script>
     <script src="js/app.js"></script>
     <script src="https://unpkg.com/ipfs-api/dist/index.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 
     <script>
         var ipfsHash_report = '';
@@ -264,9 +270,8 @@
                 key,
                 { gas: 1000000 },
                 function (error, result) {
-                    console.log('Patient Data Result:' + result);
                     if (!error) {
-                        console.log(result);
+                        console.log("fetched patient data:",result);
                         a = result[0];
                         b = result[1];
                         ailments = result[2];
@@ -400,21 +405,22 @@
                     var datax = data;
                     var recordsContainer = $('#records');
                     recordsContainer.empty();
-                    for (const key in datax) {
-                        if (datax.hasOwnProperty(key)) {
-                            const value = datax[key];
-                            if (key === 'Report' && value)
-                                keyValueElement = $(
-                                    `<iframe src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0"></iframe>`,
-                                );
-                            else if (key === 'Scanned_Image' && value)
-                                keyValueElement = $(
-                                    `<img src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0" />`,
-                                );
-                            else keyValueElement = $(`<p>${key}: ${value}</p>`);
-                            recordsContainer.append(keyValueElement);
-                        }
-                    }
+                    // for (const key in datax) {
+                    //     if (datax.hasOwnProperty(key)) {
+                    //         const value = datax[key];
+                    //         if (key === 'Report' && value)
+                    //             keyValueElement = $(
+                    //                 `<iframe src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0"></iframe>`,
+                    //             );
+                    //         else if (key === 'Scanned_Image' && value)
+                    //             keyValueElement = $(
+                    //                 `<img src="${value}" style="width:200px; height:200px; object-fit: cover;" frameborder="0" />`,
+                    //             );
+                    //         else keyValueElement = $(`<p>${key}: ${value}</p>`);
+                    //         recordsContainer.append(keyValueElement);
+                    //     }
+                    // }
+                    showRecordFromObjectRec(datax,recordsContainer);
                     $('#records').show();
                 });
 
@@ -461,7 +467,7 @@
                                     var cell2 = row.insertCell(1);
                                     var cell3 = row.insertCell(2);
 
-                                    cell2.className = 'publicKeyDoctor';
+                                    cell2.classgive = 'publicKeyDoctor';
                                     cell1.innerHTML = $('#permitDoctorList').val();
                                     cell2.innerHTML = doctorToBeAdded;
                                     cell3.innerHTML =
